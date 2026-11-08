@@ -18,6 +18,9 @@ const REFRESH_WHEN_LESS_THAN_MS = 3 * 24 * 60 * 60 * 1000;
 
 // ---------- Setup ----------
 
+// False if our channel could not be created; notifications then use Android's default channel.
+let channelReady = Platform.OS === 'android';
+
 // Call once at app start. Safe to call again.
 export async function configureNotifications() {
   Notifications.setNotificationHandler({
@@ -31,14 +34,38 @@ export async function configureNotifications() {
 
   if (Platform.OS === 'android') {
     // Android 13+ only shows the permission prompt after a channel exists.
-    await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Hourly check-ins',
-      description: 'Asks what you are doing right now',
-      importance: Notifications.AndroidImportance.HIGH,
-    });
+    try {
+      await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+        name: 'Hourly check-ins',
+        importance: Notifications.AndroidImportance.HIGH,
+      });
+      channelReady = true;
+    } catch (error) {
+      // Seen in Expo Go: the channel may still have been created even though the call failed.
+      console.warn('Creating the check-in channel failed', error);
+      channelReady = await channelExists();
+    }
   }
 
-  await updateQuickActions();
+  try {
+    await updateQuickActions();
+  } catch (error) {
+    console.warn('Registering quick actions failed', error);
+  }
+}
+
+async function channelExists(): Promise<boolean> {
+  try {
+    const channels = await Notifications.getNotificationChannelsAsync();
+    return channels.some((channel) => channel.id === CHANNEL_ID);
+  } catch {
+    return false;
+  }
+}
+
+// Notifications sent to a channel that doesn't exist are dropped, so only name it when it's there.
+function channelOption(): { channelId?: string } {
+  return channelReady ? { channelId: CHANNEL_ID } : {};
 }
 
 // Re-register the notification buttons. Call after the quick activities change.
@@ -102,7 +129,7 @@ async function scheduleNow() {
           categoryIdentifier: CATEGORY_ID,
           data: { kind: 'checkin', slot },
         },
-        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: slot, channelId: CHANNEL_ID },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: slot, ...channelOption() },
       }),
     ),
   );
@@ -147,7 +174,7 @@ export async function sendTestCheckin() {
       categoryIdentifier: CATEGORY_ID,
       data: { kind: 'checkin', slot },
     },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 5, channelId: CHANNEL_ID },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 5, ...channelOption() },
   });
 }
 
