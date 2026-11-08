@@ -14,6 +14,7 @@ import { getDb } from '../db/database';
 import { getSettings, type Settings } from '../db/settings';
 import { SettingsProvider } from '../lib/SettingsContext';
 import { fonts, useTheme } from '../theme/theme';
+import { NotificationBridge } from '../notifications/NotificationBridge';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -55,6 +56,7 @@ function AppStack() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
+      <NotificationBridge />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.background },
