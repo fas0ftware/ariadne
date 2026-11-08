@@ -65,6 +65,7 @@ function AppStack() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="log" options={{ title: 'Log' }} />
       </Stack>
     </View>
   );
