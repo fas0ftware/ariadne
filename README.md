@@ -44,11 +44,7 @@ back and see the path you actually took, and build a better routine from there.
 - Export to JSON and CSV, import from JSON backup
 - Sync with a computer, widgets, focus timer
 
-## Screenshots
 
-| Today | Log | History | Settings |
-| --- | --- | --- | --- |
-| _screenshot_ | _screenshot_ | _screenshot_ | _screenshot_ |
 
 <!-- Put images in docs/screenshots/ and replace the placeholders, e.g. ![Today](docs/screenshots/today.png) -->
 
