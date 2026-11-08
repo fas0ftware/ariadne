@@ -68,6 +68,9 @@ function AppStack() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="log" options={{ title: 'Log' }} />
+        <Stack.Screen name="history" options={{ title: 'History' }} />
+        <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+        <Stack.Screen name="activities" options={{ title: 'Activities' }} />
       </Stack>
     </View>
   );

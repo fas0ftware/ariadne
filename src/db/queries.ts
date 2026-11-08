@@ -87,14 +87,15 @@ export async function getActivity(id: number): Promise<Activity | null> {
   );
 }
 
-export async function addActivity(categoryId: number, name: string, points: number) {
+export async function addActivity(categoryId: number, name: string, points: number, isQuick = false) {
   const db = await getDb();
   await db.runAsync(
-    `INSERT INTO activities (category_id, name, points, sort_order)
-     VALUES (?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM activities WHERE category_id = ?))`,
+    `INSERT INTO activities (category_id, name, points, is_quick, sort_order)
+     VALUES (?, ?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM activities WHERE category_id = ?))`,
     categoryId,
     name.trim(),
     points,
+    isQuick ? 1 : 0,
     categoryId,
   );
   emitDataChanged();

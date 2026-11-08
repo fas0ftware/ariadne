@@ -33,9 +33,15 @@ export default function TodayScreen() {
 
   return (
     <Screen padTop>
-      <AppText variant="label" muted>
-        ARIADNE
-      </AppText>
+      <View style={styles.header}>
+        <AppText variant="label" muted>
+          ARIADNE
+        </AppText>
+        <View style={{ flexDirection: 'row' }}>
+          <Button title="History" variant="ghost" size="small" onPress={() => router.push('/history')} />
+          <Button title="Settings" variant="ghost" size="small" onPress={() => router.push('/settings')} />
+        </View>
+      </View>
       <AppText variant="heading">{formatLongDate(new Date())}</AppText>
 
       {/* Score */}
@@ -160,6 +166,7 @@ function Timeline({ logs }: { logs: LogEntry[] }) {
 }
 
 const styles = StyleSheet.create({
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: -12 },
   statsRow: { flexDirection: 'row', gap: 10 },
   stat: { flex: 1, borderWidth: 1, borderRadius: 14, padding: 14, gap: 2 },
   line: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
