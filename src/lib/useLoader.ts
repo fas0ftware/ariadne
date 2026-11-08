@@ -6,8 +6,11 @@ import { onDataChanged } from '../db/database';
 // Returns the latest result (undefined until the first load finishes).
 export function useLoader<T>(load: () => Promise<T>): T | undefined {
   const [data, setData] = useState<T>();
+  // Always call the latest `load` without re-subscribing on every render.
   const loadRef = useRef(load);
-  loadRef.current = load;
+  useEffect(() => {
+    loadRef.current = load;
+  });
 
   const reload = useCallback(() => {
     loadRef.current().then(setData).catch(console.warn);

@@ -92,6 +92,7 @@ src/
     NotificationBridge.tsx   Handles notification taps while the app runs
     backgroundTask.ts        Handles quick actions while the app is closed
   theme/theme.ts             Black and white colors, fonts, light/dark
+  lib/__tests__/             Unit tests for scoring, slots and dates
 ```
 
 ### Database
@@ -139,6 +140,17 @@ To build locally instead, you need Android Studio and its SDK:
 
 ```bash
 npx expo run:android --variant release
+```
+
+## Development checks
+
+Run these before every commit:
+
+```bash
+npm run typecheck   # TypeScript
+npm run lint        # ESLint (Expo config)
+npm test            # Jest unit tests for scoring, slots and dates
+npx expo-doctor     # dependency and config health
 ```
 
 ## How scoring works
@@ -211,6 +223,14 @@ If you use Expo Go, apply these settings to Expo Go instead.
 [dontkillmyapp.com](https://dontkillmyapp.com) has instructions for each brand.
 
 Check-ins use inexact alarms, so in deep sleep (Doze) a check-in can arrive a few minutes late.
+
+**Expo Go notes.**
+
+- Expo Go logs a warning that push notifications are unavailable. Ariadne only uses local
+  notifications, so you can ignore it.
+- On some phones Expo Go rejects creating the "Hourly check-ins" channel. Ariadne then falls
+  back to the default notification channel and keeps working.
+- The installed APK does not have these limits.
 
 ## Roadmap
 

@@ -2,7 +2,7 @@
 // - sets up the channel, buttons and permission on start
 // - tapping a check-in opens the log screen
 // - tapping a button while the app is open logs right away
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { router } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import {
@@ -13,9 +13,25 @@ import {
   slotFromNotificationId,
 } from './checkins';
 
+// The same response can arrive from the listener and from the "last response" hook.
+const handled = new Set<string>();
+
+async function handleResponse(response: Notifications.NotificationResponse) {
+  const notificationId = response.notification.request.identifier;
+  const key = `${notificationId}|${response.actionIdentifier}`;
+  if (handled.has(key)) return;
+  handled.add(key);
+  Notifications.clearLastNotificationResponseAsync().catch(() => {});
+
+  if (await handleQuickAction(response)) return;
+
+  const slot = slotFromNotificationId(notificationId);
+  if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER && slot !== null) {
+    router.push({ pathname: '/log', params: { notificationId, slot: String(slot) } });
+  }
+}
+
 export function NotificationBridge() {
-  // The same response can arrive from the listener and from the "last response" hook.
-  const handled = useRef(new Set<string>());
   const lastResponse = Notifications.useLastNotificationResponse();
 
   useEffect(() => {
@@ -32,21 +48,6 @@ export function NotificationBridge() {
   useEffect(() => {
     if (lastResponse) handleResponse(lastResponse);
   }, [lastResponse]);
-
-  async function handleResponse(response: Notifications.NotificationResponse) {
-    const notificationId = response.notification.request.identifier;
-    const key = `${notificationId}|${response.actionIdentifier}`;
-    if (handled.current.has(key)) return;
-    handled.current.add(key);
-    Notifications.clearLastNotificationResponseAsync().catch(() => {});
-
-    if (await handleQuickAction(response)) return;
-
-    const slot = slotFromNotificationId(notificationId);
-    if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER && slot !== null) {
-      router.push({ pathname: '/log', params: { notificationId, slot: String(slot) } });
-    }
-  }
 
   return null;
 }

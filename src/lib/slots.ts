@@ -13,6 +13,11 @@ export function slotsForDay(day: Date, s: SlotSettings): number[] {
   return slots;
 }
 
+// The slot we are in right now, or null outside waking hours.
+export function currentSlot(s: SlotSettings): number | null {
+  return slotForTime(Date.now(), s);
+}
+
 // The slot that `time` belongs to, or null if it is outside waking hours.
 export function slotForTime(time: number, s: SlotSettings): number | null {
   const slots = slotsForDay(new Date(time), s);

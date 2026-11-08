@@ -4,6 +4,7 @@ import { router, useFocusEffect } from 'expo-router';
 import type { Settings } from '../db/settings';
 import { useSettings } from '../lib/SettingsContext';
 import { formatMinutes, formatTime } from '../lib/dates';
+import { useNow } from '../lib/useNow';
 import {
   hasPermission,
   requestPermission,
@@ -21,6 +22,7 @@ const SNOOZE_OPTIONS = [
 export default function SettingsScreen() {
   const { settings, updateSettings } = useSettings();
   const [permission, setPermission] = useState<boolean | null>(null);
+  const now = useNow(15_000);
 
   useFocusEffect(
     useCallback(() => {
@@ -53,7 +55,7 @@ export default function SettingsScreen() {
     Alert.alert('Test sent', 'A check-in will arrive in about 5 seconds. Try locking the phone.');
   }
 
-  const snoozed = settings.snoozeUntil > Date.now();
+  const snoozed = settings.snoozeUntil > now;
 
   return (
     <Screen>
@@ -72,7 +74,7 @@ export default function SettingsScreen() {
       <Section title="Check-ins">
         {permission === false ? (
           <View style={{ gap: 8 }}>
-            <AppText muted>Notifications are not allowed yet, so check-ins can't reach you.</AppText>
+            <AppText muted>Notifications are not allowed yet, so check-ins cannot reach you.</AppText>
             <Button title="Allow notifications" variant="primary" onPress={askPermission} />
           </View>
         ) : null}

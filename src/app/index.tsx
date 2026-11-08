@@ -7,6 +7,7 @@ import { useLoader } from '../lib/useLoader';
 import { addDays, formatLongDate, formatTime, toDayKey, todayKey } from '../lib/dates';
 import { currentStreak, dayMessage, dayScore, formatPoints, scoresByDay } from '../lib/scoring';
 import { slotsForDay } from '../lib/slots';
+import { useNow } from '../lib/useNow';
 import { AppText, Button, Divider, Screen, Section } from '../components/ui';
 import { useTheme } from '../theme/theme';
 
@@ -107,7 +108,7 @@ type TimelineItem =
 // Logs plus check-in slots that passed without an answer (shown, never penalized).
 function Timeline({ logs }: { logs: LogEntry[] }) {
   const { settings } = useSettings();
-  const now = Date.now();
+  const now = useNow();
   const intervalMs = settings.intervalMin * 60_000;
 
   const items: TimelineItem[] = logs.map((log) => ({ kind: 'log', time: log.logged_at, log }));

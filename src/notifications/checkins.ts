@@ -1,6 +1,7 @@
 // Hourly check-in notifications: setup, permission, scheduling and quick actions.
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { AndroidImportance } from 'expo-notifications';
 import { addLog, listQuickActivities } from '../db/queries';
 import { getSettings, saveSettings, type Settings } from '../db/settings';
 import { slotsForDay } from '../lib/slots';
@@ -37,7 +38,7 @@ export async function configureNotifications() {
     try {
       await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
         name: 'Hourly check-ins',
-        importance: Notifications.AndroidImportance.HIGH,
+        importance: AndroidImportance.HIGH,
       });
       channelReady = true;
     } catch (error) {

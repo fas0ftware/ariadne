@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { addLog, listActivities, listCategories, type Activity } from '../db/queries';
 import { useSettings } from '../lib/SettingsContext';
-import { slotForTime } from '../lib/slots';
+import { currentSlot } from '../lib/slots';
 import { formatPoints } from '../lib/scoring';
 import { formatTime } from '../lib/dates';
 import { useLoader } from '../lib/useLoader';
@@ -24,13 +24,11 @@ export default function LogScreen() {
   }));
 
   async function log(activity: Activity) {
-    const now = Date.now();
     await addLog({
       activityId: activity.id,
       source: params.notificationId ? 'notification' : 'app',
-      slotStart: notificationSlot ?? slotForTime(now, settings),
+      slotStart: notificationSlot ?? currentSlot(settings),
       notificationId: params.notificationId ?? null,
-      loggedAt: now,
     });
     if (params.notificationId) {
       Notifications.dismissNotificationAsync(params.notificationId).catch(() => {});
