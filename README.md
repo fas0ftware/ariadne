@@ -244,3 +244,10 @@ All data stays on your phone. Ariadne has no account, no server, no analytics an
 Nothing is sent anywhere. Uninstalling the app deletes your data, so the planned JSON export
 will be your backup.
 
+@@ -244,6 +244,3 @@ All data stays on your phone. Ariadne has no account, no server, no analytics an
+Nothing is sent anywhere. Uninstalling the app deletes your data, so the planned JSON export
+will be your backup.
+
+## License
+
+To be decided. See [LICENSE](LICENSE).
