@@ -1,5 +1,11 @@
 # Ariadne
 
+[![CI](https://github.com/fas0ftware/ariadne/actions/workflows/ci.yml/badge.svg)](https://github.com/fas0ftware/ariadne/actions/workflows/ci.yml)
+![Version](https://img.shields.io/badge/version-1.1.0-black)
+![Expo](https://img.shields.io/badge/Expo-SDK%2058-000020)
+![Platform](https://img.shields.io/badge/platform-Android-3DDC84)
+![Local first](https://img.shields.io/badge/data-local--first-555)
+
 A personal self-development tracker for Android. Ariadne asks you every hour what you are doing,
 gives every activity a score, and shows your day as a number you can steer.
 
@@ -34,19 +40,34 @@ back and see the path you actually took, and build a better routine from there.
   Uses the Poppins font.
 - **Local-first.** All data lives in SQLite on the phone.
 
+### New in version 1.1
+
+- **Backup and restore.** *Settings → Backup → Share backup* turns everything (categories,
+  activities, logs, scoring settings) into one JSON text and opens the system share sheet: save it
+  to Files or Drive, or send it to yourself. *Restore from backup* takes that text back.
+  - The backup is validated completely before anything changes (types, ranges, dates, references
+    between logs, activities and categories, duplicates, size), then restored in a single database
+    transaction, so a bad file can never leave half-restored data.
+  - Phone-specific state (snooze, scheduled notifications) is not part of a backup.
+  - No new permissions and no extra native modules: it works in Expo Go too.
+- **CSV export** of every log (date, time, category, activity, points, source) for spreadsheets,
+  protected against spreadsheet formula injection.
+- **Insights on the History screen.**
+  - A black-and-white bar chart of the last 7 days with the target line (filled bars reached it).
+  - Best day, longest streak ever, average score per logged day.
+  - Where your plus points came from in the last 30 days, per category.
+
 ### Planned
 
 - Milestones (Category → Project → Sub-milestone, assigned to days) with bonus points
 - Morning plan: up to 3 priorities per day
 - Rewards you define, unlocked by points or weekly score
 - Evening summary notification
-- Calendar, weekly and monthly charts, best day, best category
-- Export to JSON and CSV, import from JSON backup
+- Calendar, monthly charts
+- Backup to a file picker (Storage Access Framework) and automatic backup reminders
 - Sync with a computer, widgets, focus timer
 
 
-
-<!-- Put images in docs/screenshots/ and replace the placeholders, e.g. ![Today](docs/screenshots/today.png) -->
 
 ## Tech stack
 
@@ -69,16 +90,21 @@ src/
     history.tsx              Day-by-day history with week/month totals
     settings.tsx             Theme, check-ins, scoring settings
     activities.tsx           Edit categories and activities
+    import.tsx               Restore from a pasted backup
   components/
     ui.tsx                   Text, buttons, rows, steppers, switches
     EditDialog.tsx           Dialog to create or edit a category or activity
+    WeekChart.tsx            Last-7-days bar chart (plain Views)
   db/
     schema.ts                Tables, migrations and default data
     database.ts              Shared connection and change events
     queries.ts               Read/write functions for categories, activities, logs
     settings.ts              Settings with defaults (key/value table)
+    backup.ts                Read everything for a backup, restore in one transaction
   lib/
     scoring.ts               Day score, penalty cap, streaks, messages
+    stats.ts                 Last days, best day, longest streak, category shares
+    backup.ts                Backup format, validation, CSV export
     slots.ts                 Check-in slot times
     dates.ts                 Local date helpers and formatting
     SettingsContext.tsx      Settings shared across screens
@@ -88,7 +114,8 @@ src/
     NotificationBridge.tsx   Handles notification taps while the app runs
     backgroundTask.ts        Handles quick actions while the app is closed
   theme/theme.ts             Black and white colors, fonts, light/dark
-  lib/__tests__/             Unit tests for scoring, slots and dates
+  lib/__tests__/             Unit tests: scoring, slots, dates, stats, backup validation, CSV
+  db/__tests__/              Restore order and transaction against a fake database
 ```
 
 ### Database
@@ -145,9 +172,26 @@ Run these before every commit:
 ```bash
 npm run typecheck   # TypeScript
 npm run lint        # ESLint (Expo config)
-npm test            # Jest unit tests for scoring, slots and dates
+npm test            # Jest unit tests
 npx expo-doctor     # dependency and config health
 ```
+
+42 tests cover scoring, check-in slots, dates, statistics, backup validation (including
+hostile input such as SQL in a date field, out-of-range points and broken references), CSV
+quoting and formula neutralising, and the restore order inside one transaction.
+
+![Test results](docs/test-results.svg)
+
+### Checks and security scan
+
+CI runs the type check, ESLint (no warnings allowed), the tests, `expo-doctor` and `npm audit`.
+
+![Checks and security scan](docs/security-scan.svg)
+
+`npm audit` currently reports moderate advisories in `minimatch`/`glob`, used by Expo's command
+line tools to match files at build time. They are not part of the app that runs on the phone,
+and the only fix npm offers is a downgrade to Expo SDK 52, so they are tracked until Expo ships
+an update.
 
 ## How scoring works
 
@@ -235,18 +279,22 @@ Check-ins use inexact alarms, so in deep sleep (Doze) a check-in can arrive a fe
   theme, settings
 - **Phase 2:** milestones (Category → Project → Sub-milestone, monthly/weekly/daily views,
   bonus points) and the morning plan
-- **Phase 3:** rewards, evening summary, stats and charts, export/import
+- **Phase 3:** rewards, evening summary, more charts (export/import and first stats: done in 1.1)
 - **Phase 4:** sync with a computer, widgets, focus timer
+
+## Changelog
+
+- **1.1.0** – Backup and restore (validated JSON, one transaction), CSV export, History insights
+  (7-day chart, best day, longest streak, average, category shares), Expo SDK 58 patch updates,
+  CI with lint, expo-doctor and npm audit.
+- **1.0.0** – Hourly check-ins with quick actions, scoring with penalty cap, streaks, Today and
+  History screens, light/dark theme.
 
 ## Privacy
 
 All data stays on your phone. Ariadne has no account, no server, no analytics and no tracking.
-Nothing is sent anywhere. Uninstalling the app deletes your data, so the planned JSON export
-will be your backup.
-
-@@ -244,6 +244,3 @@ All data stays on your phone. Ariadne has no account, no server, no analytics an
-Nothing is sent anywhere. Uninstalling the app deletes your data, so the planned JSON export
-will be your backup.
+Nothing is sent anywhere. Uninstalling the app deletes your data, so use **Settings → Backup**
+regularly. A backup goes only where you send it with the system share sheet.
 
 ## License
 

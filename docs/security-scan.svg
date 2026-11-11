@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="316" viewBox="0 0 720 316">
+<rect width="100%" height="100%" rx="10" fill="#0d1117" stroke="#30363d"/>
+<rect width="100%" height="32" rx="10" fill="#161b22"/><rect y="22" width="100%" height="10" fill="#161b22"/>
+<circle cx="18" cy="16" r="6" fill="#ff5f56"/><circle cx="38" cy="16" r="6" fill="#ffbd2e"/><circle cx="58" cy="16" r="6" fill="#27c93f"/>
+<text x="360" y="21" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" text-anchor="middle">ariadne — checks and security scan</text>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" xml:space="preserve">
+<text x="14" y="56" fill="#58a6ff">$ npm run typecheck &amp;&amp; npm run lint</text>
+<text x="14" y="74" fill="#e6edf3">TypeScript: no errors · ESLint: no problems</text>
+<text x="14" y="92" fill="#e6edf3"></text>
+<text x="14" y="110" fill="#58a6ff">$ npx expo-doctor</text>
+<text x="14" y="128" fill="#e6edf3">Running 20 checks on your project...</text>
+<text x="14" y="146" fill="#3fb950">20/20 checks passed. No issues detected!</text>
+<text x="14" y="164" fill="#e6edf3"></text>
+<text x="14" y="182" fill="#58a6ff">$ npm audit --omit=dev</text>
+<text x="14" y="200" fill="#e6edf3">critical 0  high 0  moderate 3  low 0</text>
+<text x="14" y="218" fill="#e6edf3">advisories in build tooling only (Expo CLI file globbing): minimatch</text>
+<text x="14" y="236" fill="#e6edf3">not part of the app bundle; the only fix offered downgrades Expo to SDK 52</text>
+<text x="14" y="254" fill="#e6edf3"></text>
+<text x="14" y="272" fill="#58a6ff">$ secret scan (git history, 13 commits)</text>
+<text x="14" y="290" fill="#e6edf3">No secrets found (AWS, GitHub, Anthropic, Google, private keys)</text>
+</g></svg>

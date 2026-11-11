@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
-import { Alert, Linking, View } from 'react-native';
+import { Alert, Linking, Share, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import type { Settings } from '../db/settings';
 import { useSettings } from '../lib/SettingsContext';
-import { formatMinutes, formatTime } from '../lib/dates';
+import { formatMinutes, formatTime, todayKey } from '../lib/dates';
 import { useNow } from '../lib/useNow';
 import {
   hasPermission,
@@ -12,6 +12,8 @@ import {
   sendTestCheckin,
 } from '../notifications/checkins';
 import { AppText, Button, Divider, Row, Screen, Section, Segmented, Stepper, Toggle } from '../components/ui';
+import { exportBackup, exportCsvRows } from '../db/backup';
+import { backupSummary, logsToCsv } from '../lib/backup';
 
 const SNOOZE_OPTIONS = [
   { label: '30 min', minutes: 30 },
@@ -53,6 +55,27 @@ export default function SettingsScreen() {
   async function testCheckin() {
     await sendTestCheckin();
     Alert.alert('Test sent', 'A check-in will arrive in about 5 seconds. Try locking the phone.');
+  }
+
+  // Uses the system share sheet: save to Files/Drive, send to yourself, or copy. No extra permissions.
+  async function shareBackup() {
+    try {
+      const backup = await exportBackup();
+      await Share.share({ title: `ariadne-backup-${todayKey()}.json`, message: JSON.stringify(backup) });
+      await updateSettings({ lastBackupAt: Date.now() });
+      Alert.alert('Backup ready', backupSummary(backup));
+    } catch (error) {
+      Alert.alert('Backup failed', String(error));
+    }
+  }
+
+  async function shareCsv() {
+    try {
+      const csv = logsToCsv(await exportCsvRows());
+      await Share.share({ title: `ariadne-logs-${todayKey()}.csv`, message: csv });
+    } catch (error) {
+      Alert.alert('Export failed', String(error));
+    }
   }
 
   const snoozed = settings.snoozeUntil > now;
@@ -164,6 +187,16 @@ export default function SettingsScreen() {
 
       <Section title="Activities">
         <Button title="Edit categories and activities" onPress={() => router.push('/activities')} />
+      </Section>
+
+      <Section title="Backup">
+        <AppText variant="small" muted>
+          Your data only lives on this phone. Uninstalling the app deletes it, so keep a backup.
+          {settings.lastBackupAt ? ` Last backup: ${new Date(settings.lastBackupAt).toLocaleDateString()}.` : ' No backup yet.'}
+        </AppText>
+        <Button title="Share backup (JSON)" variant="primary" onPress={shareBackup} />
+        <Button title="Export logs as CSV" onPress={shareCsv} />
+        <Button title="Restore from backup" variant="ghost" onPress={() => router.push('/import')} />
       </Section>
     </Screen>
   );

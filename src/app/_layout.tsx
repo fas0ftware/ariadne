@@ -71,6 +71,7 @@ function AppStack() {
         <Stack.Screen name="history" options={{ title: 'History' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
         <Stack.Screen name="activities" options={{ title: 'Activities' }} />
+        <Stack.Screen name="import" options={{ title: 'Restore backup' }} />
       </Stack>
     </View>
   );

@@ -12,6 +12,7 @@ export type Settings = {
   penaltyCap: number; // lowest total of negative points per day, e.g. -20
   targetScore: number; // daily score needed to keep a streak
   scheduledUntil: number; // unix ms of the last scheduled check-in (internal)
+  lastBackupAt: number; // unix ms of the last shared backup, 0 = never
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   penaltyCap: -20,
   targetScore: 20,
   scheduledUntil: 0,
+  lastBackupAt: 0,
 };
 
 // Settings are stored as key/value rows; missing keys fall back to defaults.
