@@ -1,7 +1,9 @@
+<img src="assets/logo.svg" alt="Ariadne logo: a round labyrinth with a thread leading out to a ball of thread" width="120" align="right">
+
 # Ariadne
 
 [![CI](https://github.com/fas0ftware/ariadne/actions/workflows/ci.yml/badge.svg)](https://github.com/fas0ftware/ariadne/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-1.1.0-black)
+![Version](https://img.shields.io/badge/version-1.1.1-black)
 ![Expo](https://img.shields.io/badge/Expo-SDK%2058-000020)
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84)
 ![Local first](https://img.shields.io/badge/data-local--first-555)
@@ -15,6 +17,10 @@ In the Greek myth, Ariadne gave Theseus a ball of thread so he could find his wa
 labyrinth and back out. A day can feel like a labyrinth too: hours disappear and it is hard to
 say where they went. Each check-in is a small piece of thread. At the end of the day you can look
 back and see the path you actually took, and build a better routine from there.
+
+The logo is that idea drawn: a round labyrinth and the one thread that leads out of it, ending in
+the ball Ariadne handed over. `tools/make_logo.py` draws it; the app icon, the Android adaptive and
+monochrome icons, the splash screen (light and dark) and the favicon are all rendered from it.
 
 ## Features
 
@@ -283,6 +289,8 @@ Check-ins use inexact alarms, so in deep sleep (Doze) a check-in can arrive a fe
 - **Phase 4:** sync with a computer, widgets, focus timer
 
 ## Changelog
+
+- **1.1.1** – Own logo instead of the Expo placeholder: app icon, Android adaptive and monochrome icons, splash screen for light and dark mode, favicon.
 
 - **1.1.0** – Backup and restore (validated JSON, one transaction), CSV export, History insights
   (7-day chart, best day, longest streak, average, category shares), Expo SDK 58 patch updates,
