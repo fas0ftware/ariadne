@@ -41,5 +41,12 @@
   "private": true,
   "jest": {
     "preset": "jest-expo"
+  },
+  "overrides": {
+    "minimatch@9": "11.0.8",
+    "minimatch@10": "11.0.8",
+    "glob@10": "14.0.6",
+    "glob@13": "14.0.6",
+    "glob@14": "14.0.6"
   }
 }
